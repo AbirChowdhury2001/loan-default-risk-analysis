@@ -24,29 +24,19 @@ Two normalized tables, split to separate "who the applicant is" from "what they 
 - **`customers`** — age, sex, marital status, job category, housing, residence duration, dependents, phone, foreign worker status
 - **`loans`** — checking account status, credit history, purpose, amount, duration, savings status, employment length, installment burden, property, existing credits, and the risk outcome (good/bad)
 
-See `schema.sql` for full table definitions and load logic.
+See `schema.sql` for table definitions, and `load_data.py` for the ETL logic that parses the raw dataset and loads it into these tables.
 
 ## Key Findings
 
 1. Credit history didn't behave the way I expected. People with "no credits taken / all paid back duly" actually had the highest default rate at 62.5%, while people with a "critical account" on record had the lowest at 17.1%. My guess is that anyone with a critical account already went through extra scrutiny to even get approved, so that group ends up safer by the time they show up in this data.
 
-![Default rate by credit history](dashboard/default_rate_by_credit_history.png)
-
 2. Checking account status shows a similar pattern. Being overdrawn (< 0 DM) has the highest default rate at 49.3%, which makes sense. But having no checking account at all comes out lowest at 11.7%, which I wasn't expecting. It might just mean these applicants were already screened some other way before the loan got approved.
-
-![Default rate by checking status](dashboard/default_rate_by_checking_status.png)
 
 3. Loan purpose actually lines up with intuition. Education loans (44.0%) and the "other" category (41.7%) default the most, while retraining (11.1%) and used car loans (16.5%) default the least. Loans tied to something concrete or structured seem to hold up better than loans for vaguer purposes.
 
-![Default rate by purpose](dashboard/default_rate_by_purpose.png)
-
 4. Loan amount and duration don't predict much on their own. Plotting credit amount against duration and coloring by outcome shows good and bad loans mixed together pretty evenly across the whole chart. There's a slight lean toward bigger/longer loans being riskier, but it's not a clean cutoff.
 
-![Loan amount vs duration, colored by risk](dashboard/scatter_amount_vs_duration.png)
-
 5. Installment burden barely moves the needle. Average installment rate (on the dataset's 1-4 scale, not an actual percent) is 3.1 for bad loans and 2.9 for good loans. That's close enough that I wouldn't call it a useful predictor by itself.
-
-![Average installment rate by risk](dashboard/avg_installment_rate_by_risk.png)
 
 ## Note on Fair Lending
 
@@ -54,5 +44,6 @@ The dataset includes attributes like sex, marital status, and foreign worker sta
 
 ## Dashboard
 
-Built in Power BI with three core measures (`Total Loans`, `Bad Loans`, `Default Rate`), KPI cards, and charts breaking down default rate by credit history, checking status, purpose, and installment burden, plus a scatter plot of loan size vs. duration. The full interactive file is in `dashboard/`.
+![Dashboard screenshot](dashboard/screenshots/dashboard.png)
 
+Built in Power BI with three core measures (`Total Loans`, `Bad Loans`, `Default Rate`), KPI cards, six charts breaking down default rate by credit history, checking status, purpose, existing credits, and installment burden, plus a scatter plot of loan size vs. duration.
